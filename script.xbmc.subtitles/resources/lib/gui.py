@@ -40,8 +40,8 @@ class GUI( xbmcgui.WindowXMLDialog ):
     self.list           = []
     service_list        = []
     self.stackPath      = []
-    service             = ""
-    self.man_search_str = ""   
+    service             = u""
+    self.man_search_str = u""   
     self.temp           = False
     self.rar            = False
     self.stack          = False
