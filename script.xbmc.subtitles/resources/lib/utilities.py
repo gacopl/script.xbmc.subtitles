@@ -115,6 +115,8 @@ class UserNotificationNotifier:
 
    
 def log(module,msg):
+  if isinstance (msg, str):
+    msg = msg.decode("utf-8")
   xbmc.log((u"### [%s-%s] - %s" % (__scriptname__,module,msg,)).encode('utf-8'),level=xbmc.LOGDEBUG ) 
 
 def regex_tvshow(compare, file, sub = ""):
