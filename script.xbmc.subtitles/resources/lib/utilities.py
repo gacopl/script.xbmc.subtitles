@@ -10,7 +10,7 @@ import shutil
 
 _              = sys.modules[ "__main__" ].__language__
 __scriptname__ = sys.modules[ "__main__" ].__scriptname__
-__cwd__        = sys.modules[ u"__main__" ].__cwd__
+__cwd__        = sys.modules[ "__main__" ].__cwd__
 
 # GENERAL STRINGS ENCODING CONSIDERATION TO BE USED IN THIS FILE
 #   This file tries to adhere to pythons recommendations when handling strings:
@@ -40,7 +40,7 @@ SUBTITLES_LIST = 120
 SERVICES_LIST  = 150
 CANCEL_DIALOG  = ( 9, 10, 92, 216, 247, 257, 275, 61467, 61448, )
 
-SERVICE_DIR    = os.path.join(__cwd__, u"resources", u"lib", u"services")
+SERVICE_DIR    = os.path.join(__cwd__.decode('utf-8'), u"resources", u"lib", u"services")
 
 LANGUAGES      = (
 
