@@ -10,7 +10,29 @@ import shutil
 
 _              = sys.modules[ "__main__" ].__language__
 __scriptname__ = sys.modules[ "__main__" ].__scriptname__
-__cwd__        = sys.modules[ "__main__" ].__cwd__
+__cwd__        = sys.modules[ u"__main__" ].__cwd__
+
+# GENERAL STRINGS ENCODING CONSIDERATION TO BE USED IN THIS FILE
+#   This file tries to adhere to pythons recommendations when handling strings:
+#     "Software should only work with Unicode strings internally, converting
+#      to a particular encoding on output."
+#
+#    THis means that excessive conversions will be done when getting
+#    strings from xbmc modules (that return 'utf-8' strings) that are used
+#    only to call xbmc modules. But this way we can be certain all strings are Unicode
+#    and facilitates maintenance.
+# General Hints:
+#   * Decode all strings coming from XBMC calls (from ‘utf-8’). Not needed from Frodo and up.
+#   * encode to utf-8 before calling xbmc modules.
+#   * decode (if needed) file/path strings using fsEncoding.
+#   * Most system calls allow Unicode strings.
+#   * A practical exception to all this are the __strings__ that will remain str for convenience
+
+
+#String encoding constants for unicode compatibility
+fsEncoding = sys.getfilesystemencoding()
+
+
 
 STATUS_LABEL   = 100
 LOADING_IMAGE  = 110
