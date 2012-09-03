@@ -11,11 +11,28 @@ import unicodedata
 
 from utilities import *
 
-_              = sys.modules[ "__main__" ].__language__.decode("utf-8")
-__scriptname__ = sys.modules[ "__main__" ].__scriptname__.decode("utf-8")
-__addon__      = sys.modules[ "__main__" ].__addon__.decode("utf-8")
-__profile__    = sys.modules[ "__main__" ].__profile__.decode("utf-8")
-__version__    = sys.modules[ "__main__" ].__version__.decode("utf-8")
+_              = sys.modules[ "__main__" ].__language__
+__scriptname__ = sys.modules[ "__main__" ].__scriptname__
+__addon__      = sys.modules[ "__main__" ].__addon__
+__profile__    = sys.modules[ "__main__" ].__profile__
+__version__    = sys.modules[ "__main__" ].__version__
+
+# GENERAL STRINGS ENCODING CONSIDERATION TO BE USED IN THIS FILE
+#   This file tries to adhere to pythons recommendations when handling strings:
+#     "Software should only work with Unicode strings internally, converting
+#      to a particular encoding on output."
+#
+#    THis means that excessive conversions will be done when getting
+#    strings from xbmc modules (that return 'utf-8' strings) that are used
+#    only to call xbmc modules. But this way we can be certain all strings are Unicode
+#    and facilitates maintenance.
+# General Hints:
+#   * Decode all strings coming from XBMC calls (from ‘utf-8’). Not needed from Frodo and up.
+#   * encode to utf-8 before calling xbmc modules.
+#   * decode (if needed) file/path strings using fsEncoding.
+#   * Most system calls allow Unicode strings.
+#   * A practical exception to all this are the __strings__ that will remain str for convenience
+
 
 #String encoding constants for unicode compatibility
 fsEncoding = sys.getfilesystemencoding()
@@ -65,14 +82,8 @@ class GUI( xbmcgui.WindowXMLDialog ):
     self.language_1     = languageTranslate(__addon__.getSetting( "Lang01" ), 4, 0)     # Full language 1
     self.language_2     = languageTranslate(__addon__.getSetting( "Lang02" ), 4, 0)     # Full language 2
     self.language_3     = languageTranslate(__addon__.getSetting( "Lang03" ), 4, 0)     # Full language 3
-    self.tmp_sub_dir    = os.path.join( __profile__ ,u"sub_tmp" )                       # Temporary subtitle extraction directory
-    if isinstance( self.tmp_sub_dir, str):
-      self.tmp_sub_dir  = self.tmp_sub_dir.decode(fsEncoding)
-
-    self.stream_sub_dir = os.path.join( __profile__ ,u"sub_stream" ).decode(fsEncoding)                     # Stream subtitle directory
-    if isinstance( self.stream_sub_dir, str):
-      self.stream_sub_dir = self.stream_sub_dir.decode(fsEncoding)
-
+    self.tmp_sub_dir    = os.path.join( __profile__.decode('utf-8') ,u"sub_tmp" )       # Temporary subtitle extraction directory
+    self.stream_sub_dir = os.path.join( __profile__.decode('utf-8') ,u"sub_stream" )    # Stream subtitle directory
     self.clean_temp()                                                                   # clean temp dirs
 
     if ( movieFullPath.find(u"http") > -1 ):
@@ -88,7 +99,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
         else:
           self.sub_folder = os.path.dirname(os.path.dirname( movieFullPath ))
 
-    elif ( movieFullPath.find("stack://") > -1 ):
+    elif ( movieFullPath.find(u"stack://") > -1 ):
       self.stackPath = movieFullPath.split(u" , ")
       movieFullPath = self.stackPath[0][8:]
       self.stack = True
@@ -138,24 +149,25 @@ class GUI( xbmcgui.WindowXMLDialog ):
 # JUR Here I left it for the moment.
 
     self.file_original_path = urllib.unquote ( movieFullPath )             # Movie Path
-
+    if isinstance(.file_original_path,str):  #in my tests unquote returns unicode, but just in case. For the moment we'll be safe
+      self.file_original_path = self.file_original_path.decode('utf-8')
     if (__addon__.getSetting( "fil_name" ) == "true"):                     # Display Movie name or search string
       self.file_name = os.path.basename( movieFullPath )
     else:
       if (len(str(self.year)) < 1 ) :
-        self.file_name = self.title.encode('utf-8')
+        self.file_name = self.title
         if (len(self.tvshow) > 0):
-          self.file_name = "%s S%.2dE%.2d" % (self.tvshow.encode('utf-8'),
+          self.file_name = u"%s S%.2dE%.2d" % (self.tvshow,
                                               int(self.season),
                                               int(self.episode)
                                              )
       else:
-        self.file_name = "%s (%s)" % (self.title.encode('utf-8'), str(self.year),)
+        self.file_name = u"%s (%s)" % (self.title, self.year)
 
-    if ((__addon__.getSetting( "auto_download" ) == "true") and
-        (__addon__.getSetting( "auto_download_file" ) != os.path.basename( movieFullPath ))):
+    if ((__addon__.getSetting( 'auto_download' ) == 'true') and
+        (__addon__.getSetting( 'auto_download_file' ).decode('utf-8') != os.path.basename( movieFullPath ))):
          self.autoDownload = True
-         __addon__.setSetting("auto_download_file", "")
+         __addon__.setSetting('auto_download_file', '')
 
     for name in os.listdir(SERVICE_DIR):
       if os.path.isdir(os.path.join(SERVICE_DIR,name)) and __addon__.getSetting( name ) == "true":
