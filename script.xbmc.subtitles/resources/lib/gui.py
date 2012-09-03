@@ -84,58 +84,58 @@ class GUI( xbmcgui.WindowXMLDialog ):
       movieFullPath = movieFullPath[6:]
       if path:
         if use_subs_folder:
-          self.sub_folder = os.path.join(os.path.dirname(os.path.dirname( movieFullPath )),'Subs')
+          self.sub_folder = os.path.join(os.path.dirname(os.path.dirname( movieFullPath )),u'Subs')
         else:
           self.sub_folder = os.path.dirname(os.path.dirname( movieFullPath ))
 
     elif ( movieFullPath.find("stack://") > -1 ):
-      self.stackPath = movieFullPath.split(" , ")
+      self.stackPath = movieFullPath.split(u" , ")
       movieFullPath = self.stackPath[0][8:]
       self.stack = True
 
     if not path:
       if len(self.sub_folder) < 1 :
         if use_subs_folder:
-          self.sub_folder = os.path.join(os.path.dirname( movieFullPath ),'Subs')
+          self.sub_folder = os.path.join(os.path.dirname( movieFullPath ),u'Subs')
         else:
           self.sub_folder = os.path.dirname( movieFullPath )
       if isinstance( self.sub_folder, str):
         self.sub_folder  = self.sub_folder.decode(fsEncoding)
-# JUR Here I left it for the moment.
     if path and not self.rar and not self.temp:
       if use_subs_folder:
-        self.sub_folder = os.path.join(os.path.dirname( movieFullPath ),'Subs')
+        self.sub_folder = os.path.join(os.path.dirname( movieFullPath ),u'Subs')
       else:
         self.sub_folder = os.path.dirname( movieFullPath )
-      if self.sub_folder.find("smb://") > -1:
+      if self.sub_folder.find(u"smb://") > -1:
         if self.temp:
           dialog = xbmcgui.Dialog()
-          self.sub_folder = dialog.browse( 0, _( 766 ), "files")
+          self.sub_folder = dialog.browse( 0, _( 766 ), u"files").decode("utf-8")
 
-    if self.episode.lower().find("s") > -1:                                 # Check if season is "Special"
-      self.season = "0"                                                     #
-      self.episode = self.episode[-1:]                                      #
+    if self.episode.lower().find(u's') > -1:                                 # Check if season is "Special"
+      self.season = u'0'                                                     #
+      self.episode = self.episode[-1:]                                       #
 
-    self.tvshow    = unicodedata.normalize('NFKD',
-                      unicode(unicode(xbmc.getInfoLabel
-                      ("VideoPlayer.TVshowtitle"), 'utf-8'))
-                      ).encode('ascii','ignore')                            # Show
-    self.title     = unicodedata.normalize('NFKD',
-                      unicode(unicode(xbmc.getInfoLabel
-                      ("VideoPlayer.Title"), 'utf-8'))
-                      ).encode('ascii','ignore')                            # Title
+    self.tvshow    = unicodedata.normalize('NFKD',xbmc.getInfoLabel('VideoPlayer.TVshowtitle').decode('utf-8'))
+#                       .encode('ascii','ignore')                            # Show - Normalization needed for ascii encoding for opensubtitles
+    self.title     = unicodedata.normalize('NFKD',xbmc.getInfoLabel('VideoPlayer.Title').decode('utf-8'))
+#                       .encode('ascii','ignore')                            # Title - Encode to ascii when needed. Keep intenal unicode
 
-    if self.tvshow == "":
-      if str(self.year) == "":
+    if self.tvshow == u"":
+      if self.year == u"":
         title, season, episode = regex_tvshow(False, self.title)
-        if episode != "":
-          self.season = str(int(season))
-          self.episode = str(int(episode))
+        if episode != u"":
+          self.season = season
+          self.episode = episode
           self.tvshow = title
         else:
-          self.title, self.year = xbmc.getCleanMovieTitle( self.title )
+          self.title, self.year = xbmc.getCleanMovieTitle( self.title.encode('utf-8') )  #xbmc wants and returns utf-8
+          if isinstance(self.title,str):
+            self.title.decode('utf-8')
+          if isinstance(self.year,str):
+            self.year.decode('utf-8')
     else:
-      self.year = ""
+      self.year = u""
+# JUR Here I left it for the moment.
 
     self.file_original_path = urllib.unquote ( movieFullPath )             # Movie Path
 
