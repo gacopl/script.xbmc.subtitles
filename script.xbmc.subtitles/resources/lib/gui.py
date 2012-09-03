@@ -110,8 +110,6 @@ class GUI( xbmcgui.WindowXMLDialog ):
           self.sub_folder = os.path.join(os.path.dirname( movieFullPath ),u'Subs')
         else:
           self.sub_folder = os.path.dirname( movieFullPath )
-      if isinstance( self.sub_folder, str):
-        self.sub_folder  = self.sub_folder.decode(fsEncoding)
     if path and not self.rar and not self.temp:
       if use_subs_folder:
         self.sub_folder = os.path.join(os.path.dirname( movieFullPath ),u'Subs')
@@ -120,7 +118,7 @@ class GUI( xbmcgui.WindowXMLDialog ):
       if self.sub_folder.find(u"smb://") > -1:
         if self.temp:
           dialog = xbmcgui.Dialog()
-          self.sub_folder = dialog.browse( 0, _( 766 ), u"files").decode("utf-8")
+          self.sub_folder = dialog.browse( 0, _( 766 ), "files").decode("utf-8")
 
     if self.episode.lower().find(u's') > -1:                                 # Check if season is "Special"
       self.season = u'0'                                                     #
@@ -146,15 +144,12 @@ class GUI( xbmcgui.WindowXMLDialog ):
             self.year.decode('utf-8')
     else:
       self.year = u""
-# JUR Here I left it for the moment.
 
     self.file_original_path = urllib.unquote ( movieFullPath )             # Movie Path
-    if isinstance(.file_original_path,str):  #in my tests unquote returns unicode, but just in case. For the moment we'll be safe
-      self.file_original_path = self.file_original_path.decode('utf-8')
     if (__addon__.getSetting( "fil_name" ) == "true"):                     # Display Movie name or search string
       self.file_name = os.path.basename( movieFullPath )
     else:
-      if (len(str(self.year)) < 1 ) :
+      if (len(self.year) < 1 ) :
         self.file_name = self.title
         if (len(self.tvshow) > 0):
           self.file_name = u"%s S%.2dE%.2d" % (self.tvshow,
@@ -175,9 +170,9 @@ class GUI( xbmcgui.WindowXMLDialog ):
         service = name
 
     if len(self.tvshow) > 0:
-      def_service = __addon__.getSetting( "deftvservice")
+      def_service = __addon__.getSetting( "deftvservice").unencode('utf-8')
     else:
-      def_service = __addon__.getSetting( "defmovieservice")
+      def_service = __addon__.getSetting( "defmovieservice").unencode('utf-8')
 
     if service_list.count(def_service) > 0:
       service = def_service
@@ -192,25 +187,26 @@ class GUI( xbmcgui.WindowXMLDialog ):
       self.next = list(service_list)
       self.controlId = -1
 
-      log( __name__ ,"Addon Version: [%s]"         % __version__)
-      log( __name__ ,"Manual Search : [%s]"        % self.mansearch)
-      log( __name__ ,"Default Service : [%s]"      % self.service)
-      log( __name__ ,"Services : [%s]"             % self.service_list)
-      log( __name__ ,"Temp?: [%s]"                 % self.temp)
-      log( __name__ ,"Rar?: [%s]"                  % self.rar)
-      log( __name__ ,"File Path: [%s]"             % self.file_original_path)
-      log( __name__ ,"Year: [%s]"                  % str(self.year))
-      log( __name__ ,"Tv Show Title: [%s]"         % self.tvshow)
-      log( __name__ ,"Tv Show Season: [%s]"        % self.season)
-      log( __name__ ,"Tv Show Episode: [%s]"       % self.episode)
-      log( __name__ ,"Movie/Episode Title: [%s]"   % self.title)
-      log( __name__ ,"Subtitle Folder: [%s]"       % self.sub_folder)
-      log( __name__ ,"Languages: [%s] [%s] [%s]"   % (self.language_1, self.language_2, self.language_3,))
-      log( __name__ ,"Parent Folder Search: [%s]"  % self.parsearch)
-      log( __name__ ,"Stacked(CD1/CD2)?: [%s]"     % self.stack)
+      log( __name__ ,u"Addon Version: [%s]"         % __version__.decode('utf-8'))
+      log( __name__ ,u"Manual Search : [%s]"        % self.mansearch)
+      log( __name__ ,u"Default Service : [%s]"      % self.service)
+      log( __name__ ,u"Services : [%s]"             % self.service_list)
+      log( __name__ ,u"Temp?: [%s]"                 % self.temp)
+      log( __name__ ,u"Rar?: [%s]"                  % self.rar)
+      log( __name__ ,u"File Path: [%s]"             % self.file_original_path)
+      log( __name__ ,u"Year: [%s]"                  % str(self.year))
+      log( __name__ ,u"Tv Show Title: [%s]"         % self.tvshow)
+      log( __name__ ,u"Tv Show Season: [%s]"        % self.season)
+      log( __name__ ,u"Tv Show Episode: [%s]"       % self.episode)
+      log( __name__ ,u"Movie/Episode Title: [%s]"   % self.title)
+      log( __name__ ,u"Subtitle Folder: [%s]"       % self.sub_folder)
+      log( __name__ ,u"Languages: [%s] [%s] [%s]"   % (self.language_1, self.language_2, self.language_3,))
+      log( __name__ ,u"Parent Folder Search: [%s]"  % self.parsearch)
+      log( __name__ ,u"Stacked(CD1/CD2)?: [%s]"     % self.stack)
 
     return self.autoDownload
 
+# JUR Here I left it for the moment.
   def Search_Subtitles( self, gui = True ):
     self.subtitles_list = []
     if gui:
