@@ -18,7 +18,7 @@ SUBTITLES_LIST = 120
 SERVICES_LIST  = 150
 CANCEL_DIALOG  = ( 9, 10, 92, 216, 247, 257, 275, 61467, 61448, )
 
-SERVICE_DIR    = os.path.join(__cwd__, "resources", "lib", "services")
+SERVICE_DIR    = os.path.join(__cwd__, u"resources", u"lib", u"services")
 
 LANGUAGES      = (
 
@@ -86,18 +86,18 @@ LANGUAGES      = (
     (u"Chinese (Simplified)"       , "17",       "zh",            "chi",                 "100",                   30207  ) )
 
 
-REGEX_EXPRESSIONS = [ '[Ss]([0-9]+)[][._-]*[Ee]([0-9]+)([^\\\\/]*)$',
-                      '[\._ \-]([0-9]+)x([0-9]+)([^\\/]*)',                     # foo.1x09
-                      '[\._ \-]([0-9]+)([0-9][0-9])([\._ \-][^\\/]*)',          # foo.109
-                      '([0-9]+)([0-9][0-9])([\._ \-][^\\/]*)',
-                      '[\\\\/\\._ -]([0-9]+)([0-9][0-9])[^\\/]*',
-                      'Season ([0-9]+) - Episode ([0-9]+)[^\\/]*',
-                      '[\\\\/\\._ -][0]*([0-9]+)x[0]*([0-9]+)[^\\/]*',
-                      '[[Ss]([0-9]+)\]_\[[Ee]([0-9]+)([^\\/]*)',                 #foo_[s01]_[e01]
-                      '[\._ \-][Ss]([0-9]+)[\.\-]?[Ee]([0-9]+)([^\\/]*)',        #foo, s01e01, foo.s01.e01, foo.s01-e01
-                      's([0-9]+)ep([0-9]+)[^\\/]*',                              #foo - s01ep03, foo - s1ep03
-                      '[Ss]([0-9]+)[][ ._-]*[Ee]([0-9]+)([^\\\\/]*)$',
-                      '[\\\\/\\._ \\[\\(-]([0-9]+)x([0-9]+)([^\\\\/]*)$'
+REGEX_EXPRESSIONS = [ u'[Ss]([0-9]+)[][._-]*[Ee]([0-9]+)([^\\\\/]*)$',
+                      u'[\._ \-]([0-9]+)x([0-9]+)([^\\/]*)',                     # foo.1x09
+                      u'[\._ \-]([0-9]+)([0-9][0-9])([\._ \-][^\\/]*)',          # foo.109
+                      u'([0-9]+)([0-9][0-9])([\._ \-][^\\/]*)',
+                      u'[\\\\/\\._ -]([0-9]+)([0-9][0-9])[^\\/]*',
+                      u'Season ([0-9]+) - Episode ([0-9]+)[^\\/]*',
+                      u'[\\\\/\\._ -][0]*([0-9]+)x[0]*([0-9]+)[^\\/]*',
+                      u'[[Ss]([0-9]+)\]_\[[Ee]([0-9]+)([^\\/]*)',                 #foo_[s01]_[e01]
+                      u'[\._ \-][Ss]([0-9]+)[\.\-]?[Ee]([0-9]+)([^\\/]*)',        #foo, s01e01, foo.s01.e01, foo.s01-e01
+                      u's([0-9]+)ep([0-9]+)[^\\/]*',                              #foo - s01ep03, foo - s1ep03
+                      u'[Ss]([0-9]+)[][ ._-]*[Ee]([0-9]+)([^\\\\/]*)$',
+                      u'[\\\\/\\._ \\[\\(-]([0-9]+)x([0-9]+)([^\\\\/]*)$'
                      ]
 
 
@@ -115,24 +115,25 @@ class UserNotificationNotifier:
 
 
 def log(module,msg):
+# Procedure expects unicode but also admits utf-8. Anything else could give runtime error. Avoid
   if isinstance (msg, str):
     msg = msg.decode("utf-8")
   xbmc.log((u"### [%s-%s] - %s" % (__scriptname__,module,msg,)).encode('utf-8'),level=xbmc.LOGDEBUG )
 
-def regex_tvshow(compare, file, sub = ""):
-  sub_info = ""
+def regex_tvshow(compare, file, sub = u""):
+  sub_info = u""
   tvshow = 0
 
   for regex in REGEX_EXPRESSIONS:
     response_file = re.findall(regex, file)
     if len(response_file) > 0 :
-      log( __name__ , "Regex File Se: %s, Ep: %s," % (str(response_file[0][0]),str(response_file[0][1]),) )
+      log( __name__ , u"Regex File Se: %s, Ep: %s," % (response_file[0][0],response_file[0][1],) )
       tvshow = 1
       if not compare :
         title = re.split(regex, file)[0]
         for char in ['[', ']', '_', '(', ')','.','-']:
            title = title.replace(char, ' ')
-        if title.endswith(" "): title = title[:-1]
+        if title.endswith(u" "): title = title[:-1]
         return title,response_file[0][0], response_file[0][1]
       else:
         break
@@ -142,7 +143,7 @@ def regex_tvshow(compare, file, sub = ""):
       response_sub = re.findall(regex, sub)
       if len(response_sub) > 0 :
         try :
-          sub_info = "Regex Subtitle Ep: %s," % (str(response_sub[0][1]),)
+          sub_info = u"Regex Subtitle Ep: %s," % (str(response_sub[0][1]),)
           if (int(response_sub[0][1]) == int(response_file[0][1])):
             return True
         except: pass
@@ -150,7 +151,7 @@ def regex_tvshow(compare, file, sub = ""):
   if compare :
     return True
   else:
-    return "","",""
+    return u"",u"",u""
 
 def languageTranslate(lang, lang_from, lang_to):
   for x in LANGUAGES:
@@ -181,7 +182,7 @@ def copy_files( subtitle_file, file_path ):
   subtitle_set = False
   try:
     xbmcvfs.copy(subtitle_file, file_path)
-    log( __name__ ,"vfs module copy %s -> %s" % (subtitle_file, file_path))
+    log( __name__ ,u"vfs module copy %s -> %s" % (subtitle_file, file_path))
     subtitle_set = True
   except :
     dialog = xbmcgui.Dialog()
@@ -191,4 +192,3 @@ def copy_files( subtitle_file, file_path ):
       subtitle_set = True
 
   return subtitle_set, file_path
-
