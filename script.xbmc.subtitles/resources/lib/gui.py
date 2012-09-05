@@ -8,6 +8,7 @@ import urllib
 import socket
 import xbmcgui
 import unicodedata
+import subprocess
 
 from utilities import *
 
@@ -342,15 +343,24 @@ class GUI( xbmcgui.WindowXMLDialog ):
   def Extract_Subtitles( self, zip_subs, subtitle_lang, gui = True ):
     xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (zip_subs,self.tmp_sub_dir,)).encode('utf-8'))
     xbmc.sleep(1000)
+    #exit();
     files = os.listdir(self.tmp_sub_dir)
     sub_filename = os.path.basename( self.file_original_path )
     exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass" ]
     subtitle_set = False
-    if len(files) < 1 :
+    if len(files) < 2 :
+      subprocess.call(['unzip', '-d', self.tmp_sub_dir, zip_subs])
+      xbmc.sleep(1000)
+      files = os.listdir(self.tmp_sub_dir)
+    elif len(files) < 2:
+      subprocess.call(['unrar', 'x', zip_subs, self.tmp_sub_dir])
+      xbmc.sleep(1000)
+    else:
       if gui:
         self.getControl( STATUS_LABEL ).setLabel( _( 654 ) )
         self.show_service_list(gui)
-    else :
+    files = os.listdir(self.tmp_sub_dir)    
+    if len(files) > 1 :
       if gui:
         self.getControl( STATUS_LABEL ).setLabel( _( 652 ) )
       subtitle_set = False
