@@ -348,19 +348,44 @@ class GUI( xbmcgui.WindowXMLDialog ):
     sub_filename = os.path.basename( self.file_original_path )
     exts = [".srt", ".sub", ".txt", ".smi", ".ssa", ".ass" ]
     subtitle_set = False
-    if len(files) < 2 :
-      subprocess.call(['unzip', '-d', self.tmp_sub_dir, zip_subs])
-      xbmc.sleep(1000)
-      files = os.listdir(self.tmp_sub_dir)
-    elif len(files) < 2:
-      subprocess.call(['unrar', 'x', zip_subs, self.tmp_sub_dir])
-      xbmc.sleep(1000)
-    else:
-      if gui:
-        self.getControl( STATUS_LABEL ).setLabel( _( 654 ) )
-        self.show_service_list(gui)
-    files = os.listdir(self.tmp_sub_dir)    
-    if len(files) > 1 :
+    
+    if len(files) < 2: 
+        if __addon__.getSetting( "extendedextract" ) == "true":
+            if __addon__.getSetting("extendedextract7zpath") != '':
+                extcmd = __addon__.getSetting("extendedextract7zpath")
+            else:
+                extcmd = '7z'
+                if os.name == 'nt':
+                    extcmd = 'C:\Program Files\7-zip\7z.exe'
+            os.system((extcmd +' e -o' + self.tmp_sub_dir + ' ' + zip_subs))
+            xbmc.sleep(1000)
+            files = os.listdir(self.tmp_sub_dir)
+            if len(files) < 2: 
+                if __addon__.getSetting("extendedextractunzippath") != '':
+                    extcmd = __addon__.getSetting("extendedextractunzippath")
+                else:
+                    extcmd = 'unzip'
+                    if os.name == 'nt':
+                        extcmd = 'C:\Program Files\WinZip\unzip.exe'    
+                print extcmd
+                os.system((extcmd + ' -d ' + self.tmp_sub_dir + ' ' + zip_subs))
+                xbmc.sleep(1000)
+                files = os.listdir(self.tmp_sub_dir)
+            if len(files) < 2:
+                if __addon__.getSetting("extendedextractunrarpath") != '':
+                    extcmd = __addon__.getSetting("extendedextractunrarpath")
+                else:
+                    extcmd = 'unrar'
+                    if os.name == 'nt':
+                        extcmd = 'C:\Program Files\WinRAR\unrar.exe'
+                os.system([extcmd, 'x', zip_subs, self.tmp_sub_dir])
+                xbmc.sleep(1000)
+                files = os.listdir(self.tmp_sub_dir)
+        else:
+            if gui:
+                self.getControl( STATUS_LABEL ).setLabel( _( 654 ) )
+                self.show_service_list(gui)
+    if len(files) > 1:
       if gui:
         self.getControl( STATUS_LABEL ).setLabel( _( 652 ) )
       subtitle_set = False

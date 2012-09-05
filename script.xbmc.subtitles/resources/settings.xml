@@ -80,5 +80,9 @@
       <setting id="search_next" type="bool" label="30130" default="false" />
       <setting id="auto_download" type="bool" label="30131" default="false" />
       <setting id="auto_download_file" visible= "false" type="text" label="" default="" />
+      <setting id="extendedextract" type="bool" label="30148" default="false" />
+      <setting id="extendedextract7zpath" type="text" visible= "eq(-1,true)" source="files" label="30149" default="" />
+      <setting id="extendedextractunzippath" type="text" visible= "eq(-2,true)" source="files" label="30150" default="" />
+      <setting id="extendedextractunrarpath" type="text" visible= "eq(-3,true)" source="files" label="30151" default="" />
     </category>
 </settings>
