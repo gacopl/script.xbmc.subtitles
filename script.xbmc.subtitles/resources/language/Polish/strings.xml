@@ -68,10 +68,7 @@
     <string id="30140">- Wybierz rodzaj napisów:</string>
     <string id="30146">- napisy24.pl Nazwa</string>
     <string id="30147">- napisy24.pl Hasło</string>
-    <string id="30148">Spróbuj innych metod gdy wypakowanie napisów zawodzi</string>
-    <string id="30149">- Ścieżka do 7zip (pozostaw puste jeśli standardowa)</string>
-    <string id="30150">- Ścieżka do Unzip (pozostaw puste jeśli standardowa)</string>
-    <string id="30151">- Ścieżka do Unrar (pozostaw puste jeśli standardowa)</string>
+    <string id="30148">Spróbuj innej metody gdy wypakowanie napisów zawodzi</string>
 
   <!-- Languages  -->    
        
